@@ -1,11 +1,13 @@
 const getSensorReadings = require('./get-sensor-readings')
+const databaseOperations = require('./database-operations')
+const {notify} = require('./notifier')
 
 /*
 Instantiate the cache. In this case its a simple variable stored in local memory
 */
 const cache = {
-  temperature: null,
-  humidity: null
+  temperature: 0,
+  humidity: 0
 }
 
 /*
@@ -20,10 +22,20 @@ setInterval(() => {
     Set the values of the cache on receiving new readings
     */
     console.log(temperature + ' ' + humidity)
+    databaseOperations.insertReading('temperature', temperature)
+    databaseOperations.insertReading('humidity', humidity)
+
+    if (cache.temperature !== temperature) {
+      notify(temperature, 'temperature')
+    }
+    if (cache.humidity !== humidity) {
+      notify(humidity, 'humidity')
+    }
+
     cache.temperature = temperature
     cache.humidity = humidity
   })
-}, 4000)
+}, 2000)
 
 /*
 The functions that we expose only return the cached values, and don't make a call to the sensor interface everytime
