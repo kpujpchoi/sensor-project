@@ -1,22 +1,24 @@
-const express = require('express')
-const path = require('path')
-const app = express()
-const getCachedSensorReadings = require('./get-cached-sensor-readings')
+    const express =require('express')
+    const path =require('path')
+    const app =express()
+    const getCachedSensorReadings =require('./get-cached-sensor-readings')
 
-/*
-We now utilize the synchronous methods exported from the 'get-cached-sensor-readings' module
-*/
+    app.use('/public', express.static(path.join(__dirname, 'public')))
 
-app.use('/public', express.static(path.join(__dirname, 'public')))
-
-app.get('/temperature', function (req, res) {
-  res.send('<strong>' + getCachedSensorReadings.getTemperature().toFixed(1) +'</strong>' )
+    app.get('/temperature',function(req, res){
+     res.json({
+       value:
+    getCachedSensorReadings.getTemperature().toFixed(1)
 })
+   })
 
-app.get('/humidity', function (req, res) {
-  res.send('<strong>' + getCachedSensorReadings.getHumidity().toFixed(1) + '</strong>' )
+    app.get('/humidity',function(req, res){
+      res.json({
+        value: getCachedSensorReadings.getHumidity()
+        .toFixed(1)
 })
+    })
 
-app.listen(3000, function () {
-  console.log('Server listening on port 3000')
-})
+    app.listen(3000,function(){
+      console.log('Server listening on port 3000')
+    })
